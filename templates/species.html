@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Species Database Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#050510] text-white overflow-hidden font-sans h-screen flex flex-col relative">
+    
+    <div class="hidden from-indigo-900 via-purple-900 to-[#050510] from-teal-900 via-cyan-900 from-blue-900 via-slate-900 from-pink-400 via-purple-400 to-cyan-400 from-green-400 via-teal-400 from-blue-400 via-gray-300 to-white"></div>
+
+    <div class="absolute inset-0 z-0 overflow-hidden bg-black">
+        <img id="bg-image" src="{{ flat_data[0].bgimg }}" alt="Habitat Background" class="w-full h-full object-cover opacity-50 transition-opacity duration-700 ease-in-out">
+        <div class="absolute inset-0 bg-gradient-to-br {{ flat_data[0].overlaygradient }} opacity-80 transition-colors duration-1000" id="bg-overlay"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-20 w-full p-8 flex justify-between items-center max-w-7xl mx-auto">
+        <div id="habitat-title" class="border border-white/30 px-4 py-2 uppercase tracking-widest text-sm hover:border-cyan-400 hover:text-cyan-400 transition-colors font-bold">
+            {{ flat_data[0].habitat }}
+        </div>
+        
+        <div class="relative flex-1 max-w-sm mx-8">
+            <div class="relative flex items-center bg-[#0a0a1a]/80 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 hover:border-cyan-400 transition-colors">
+                <i class="fa-solid fa-magnifying-glass text-white/50 mr-3"></i>
+                <input type="text" id="search-input" placeholder="Search species..." class="bg-transparent border-none outline-none text-white w-full text-sm placeholder-white/40">
+            </div>
+            <ul id="search-results" class="absolute top-[120%] left-0 w-full bg-[#050510]/95 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hidden flex-col max-h-48 overflow-y-auto hide-scrollbar shadow-2xl z-50">
+            </ul>
+        </div>
+
+        <div class="flex gap-6 items-center">
+            <i class="fa-regular fa-user cursor-pointer hover:text-cyan-400 transition-colors"></i>
+            <!-- Hamburger menu now triggers togglesidebar() -->
+            <i class="fa-solid fa-bars cursor-pointer hover:text-cyan-400 transition-colors text-xl" onclick="togglesidebar()"></i>
+        </div>
+    </nav>
+
+    <main class="relative z-10 flex-1 flex items-center max-w-7xl mx-auto w-full px-8">
+        <div class="w-1/2 pr-12 opacity-0 transform translate-y-8 transition-all duration-700 ease-out" id="text-content">
+            <h1 id="specie-title" class="text-7xl md:text-8xl font-bold uppercase tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r {{ flat_data[0].gradient }} drop-shadow-[0_0_15px_{{ flat_data[0].shadow }}]">
+                {{ flat_data[0].name }}
+            </h1>
+            <h3 class="text-2xl mb-4 font-light">About</h3>
+            <p id="specie-desc" class="text-gray-300 leading-relaxed mb-10 max-w-md font-light">
+                {{ flat_data[0].desc }}
+            </p>
+            <button class="group relative px-8 py-3 rounded-full border border-cyan-500/50 bg-[#0a0a1a] hover:bg-cyan-900/30 overflow-hidden transition-all duration-300">
+                <span class="relative z-10 uppercase tracking-widest text-sm text-cyan-50 font-semibold group-hover:text-cyan-300 transition-colors">Learn More</span>
+                <div class="absolute inset-0 rounded-full border border-cyan-400 opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity"></div>
+                <div class="absolute inset-0 bg-cyan-400 blur-[20px] opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            </button>
+        </div>
+
+        <div class="w-1/2 relative h-full flex justify-center items-center">
+            <div id="image-container" class="relative w-full max-w-lg aspect-square opacity-0 transition-opacity duration-700">
+                <img id="main-image" src="{{ flat_data[0].img }}" alt="Specie" class="w-full h-full object-cover rounded-full filter {{ flat_data[0].glowclass }} float-animation mix-blend-screen">
+            </div>
+        </div>
+    </main>
+
+    <!-- Collapsable Grouped Side Menu -->
+    <aside id="sidebar" class="absolute right-8 top-36 bottom-32 w-48 overflow-y-auto z-20 hide-scrollbar flex flex-col gap-6 bg-black/40 p-4 rounded-xl backdrop-blur-md border border-white/10 transition-all duration-500 ease-in-out transform translate-x-12 opacity-0 pointer-events-none">
+        {% for habitat, species_list in grouped_data.items() %}
+            <div>
+                <h4 class="text-cyan-400/80 uppercase text-xs tracking-widest mb-3 border-b border-cyan-400/20 pb-1 font-bold">{{ habitat }}</h4>
+                <ul class="flex flex-col gap-3 border-l border-white/10 ml-1 pl-3">
+                    {% for specie in species_list %}
+                        <li class="text-white/60 hover:text-white cursor-pointer text-sm transition-colors specie-menu-item" data-name="{{ specie.name }}">
+                            {{ specie.name.title() }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </aside>
+
+    <script>
+        const db_data = {{ flat_data | tojson | safe }};
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
