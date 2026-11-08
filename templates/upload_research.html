@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Research Log | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style> select { -webkit-appearance: none; -moz-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-[#050510] text-white font-sans p-8 flex items-center justify-center min-h-screen relative overflow-hidden">
+    
+    <div class="fixed inset-0 z-0 h-screen overflow-hidden bg-black pointer-events-none">
+        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=2000" class="w-full h-full object-cover opacity-30 mix-blend-lighten">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-[#050510]/90 to-teal-900/80"></div>
+    </div>
+
+    <div class="relative z-10 max-w-xl w-full bg-[#0a0a1a]/70 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl">
+        <h1 class="text-2xl font-bold mb-6 text-purple-400 uppercase tracking-widest">Publish Research</h1>
+        <form action="/upload_research" method="POST" class="flex flex-col gap-4">
+            <input type="text" name="topic" placeholder="Research Topic" required class="bg-black/40 border border-white/20 rounded-lg p-3 outline-none focus:border-purple-400 text-sm">
+            <textarea name="description" placeholder="Abstract / Description" rows="4" required class="bg-black/40 border border-white/20 rounded-lg p-3 outline-none focus:border-purple-400 resize-none text-sm"></textarea>
+            
+            <select name="species" required class="bg-black/40 border border-white/20 rounded-lg p-3 outline-none focus:border-purple-400 text-sm cursor-pointer">
+                <option value="" disabled selected>Select Associated Species</option>
+                {% for s in species_list %}
+                <option value="{{ s.name }}" class="bg-[#0a0a1a]">{{ s.name.title() }}</option>
+                {% endfor %}
+            </select>
+            
+            <p class="text-[10px] text-white/40 -mt-2 ml-2">Need a species not listed? Use <a href="/add_entity" class="text-purple-400 underline">Propose Entity</a> on Dashboard.</p>
+
+            <select name="climate" required class="bg-black/40 border border-white/20 rounded-lg p-3 outline-none focus:border-purple-400 text-sm cursor-pointer">
+                <option value="" disabled selected>Select Climate Region</option>
+                {% for c in climates %}
+                <option value="{{ c }}" class="bg-[#0a0a1a]">{{ c.title() }}</option>
+                {% endfor %}
+            </select>
+
+            <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/10">
+                <a href="/home" class="text-sm text-white/50 hover:text-white transition-colors">Cancel</a>
+                <button type="submit" class="bg-purple-900/60 hover:bg-purple-800 border border-purple-500/50 px-6 py-3 rounded-lg font-bold uppercase tracking-widest text-xs">Publish Log</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

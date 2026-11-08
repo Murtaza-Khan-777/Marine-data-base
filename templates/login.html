@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style> select { -webkit-appearance: none; -moz-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-[#050510] text-white font-sans h-screen flex flex-col items-center justify-center relative overflow-hidden px-4">
+    
+    <!-- Unified Immersive Glassmorphism Background -->
+    <div class="fixed inset-0 z-0 h-screen overflow-hidden bg-black pointer-events-none">
+        <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=2000" class="w-full h-full object-cover opacity-30 mix-blend-lighten">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-[#050510]/90 to-teal-900/80"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md bg-[#0a0a1a]/70 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+        <div class="flex mb-8 border-b border-white/10">
+            <a href="/?tab=login" class="flex-1 pb-4 text-center font-bold text-sm tracking-widest uppercase transition-colors {% if tab == 'login' %}text-cyan-400 border-b-2 border-cyan-400{% else %}text-white/40 hover:text-white/70 border-b-2 border-transparent{% endif %}">Login</a>
+            <a href="/?tab=register" class="flex-1 pb-4 text-center font-bold text-sm tracking-widest uppercase transition-colors {% if tab == 'register' %}text-purple-400 border-b-2 border-purple-400{% else %}text-white/40 hover:text-white/70 border-b-2 border-transparent{% endif %}">Register</a>
+        </div>
+
+        {% if tab == 'login' %}
+        <form action="/login" method="POST" class="flex flex-col gap-5">
+            <input type="text" name="username" placeholder="Email Address" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-cyan-400">
+            <input type="password" name="password" placeholder="Password" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-cyan-400">
+            <select name="role" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-cyan-400">
+                <option value="user" class="bg-[#0a0a1a]">Standard User</option>
+                <option value="researcher" class="bg-[#0a0a1a]">Researcher</option>
+                <option value="admin" class="bg-[#0a0a1a]">Admin</option>
+            </select>
+            <button type="submit" class="mt-4 w-full bg-cyan-900/60 hover:bg-cyan-800 border border-cyan-500/50 text-cyan-50 font-bold uppercase tracking-widest py-4 rounded-lg">Access System</button>
+        </form>
+        {% else %}
+        <form action="/register" method="POST" class="flex flex-col gap-5">
+            <input type="text" name="reg_username" placeholder="Email Address" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-purple-400">
+            <input type="password" name="reg_password" placeholder="Create Password" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-purple-400">
+            <select name="reg_role" required class="w-full bg-black/40 border border-white/20 rounded-lg py-3 px-4 outline-none focus:border-purple-400">
+                <option value="user" class="bg-[#0a0a1a]">Standard User</option>
+                <option value="researcher" class="bg-[#0a0a1a]">Researcher</option>
+            </select>
+            <button type="submit" class="mt-4 w-full bg-purple-900/60 hover:bg-purple-800 border border-purple-500/50 text-purple-50 font-bold uppercase tracking-widest py-4 rounded-lg">Create Account</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Researcher Profile | {{ email }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#050510] text-white font-sans p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+            <div>
+                <h1 class="text-3xl font-bold text-purple-400 capitalize">{{ researcher.name }}</h1>
+                <p class="text-sm text-white/50">{{ email }} | Status: <span class="uppercase text-white">{{ researcher.status }}</span></p>
+            </div>
+            <div class="flex gap-4">
+                <a href="/admin/ban/{{ email }}" class="bg-red-900/50 border border-red-500/50 px-4 py-2 rounded-lg text-sm font-bold">Ban Researcher Directly</a>
+                <a href="/admin" class="px-4 py-2 bg-white/10 rounded-lg">Back to Admin</a>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold mb-6">Published Research Works</h2>
+        <div class="flex flex-col gap-4">
+            {% for w in works %}
+            <div class="bg-[#0a0a1a] border border-white/10 p-6 rounded-xl flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-cyan-400">{{ w.topic }}</h3>
+                    <p class="text-sm text-gray-300 mt-1">{{ w.description }}</p>
+                    <span class="text-xs text-white/40 mt-2 block">Species: {{ w.species }} | Climate: {{ w.climate }}</span>
+                </div>
+                <a href="/research/{{ w.id }}" class="px-4 py-2 bg-cyan-900/40 border border-cyan-500/30 rounded-lg text-sm">View Log</a>
+            </div>
+            {% else %}
+            <p class="text-white/40 italic">No research works published by this user.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

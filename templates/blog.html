@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Community Blog | Marine Database</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-[#050510] text-white font-sans overflow-x-hidden min-h-screen">
+    <nav class="relative z-20 w-full p-8 flex justify-between items-center max-w-7xl mx-auto border-b border-white/5">
+        <a href="/home" class="font-bold text-xl tracking-widest uppercase flex items-center hover:text-cyan-400">
+            <i class="fa-solid fa-house text-cyan-400 mr-3"></i> MarineNet
+        </a>
+        <div class="flex gap-8 items-center text-sm font-semibold tracking-widest uppercase">
+            <a href="/home" class="text-white/60 hover:text-cyan-400">Dashboard</a>
+            <a href="/species" class="text-white/60 hover:text-cyan-400">Species DB</a>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto w-full px-8 py-12">
+        <h1 class="text-4xl font-bold uppercase tracking-tight mb-12 text-cyan-400">Field Notes & Blog</h1>
+
+        <div class="bg-[#0a0a1a] border border-white/20 rounded-2xl p-6 mb-16">
+            <h3 class="text-sm font-bold tracking-widest uppercase text-cyan-400 mb-6 border-b border-white/10 pb-4"><i class="fa-solid fa-pen-nib mr-2"></i> Draft Post</h3>
+            <form action="/create_post" method="POST" class="flex flex-col gap-4">
+                <input type="text" name="title" placeholder="Title" required class="bg-black/40 border border-white/10 rounded-lg py-3 px-4 outline-none focus:border-cyan-400">
+                <textarea name="content" rows="3" placeholder="Share observations..." required class="bg-black/40 border border-white/10 rounded-lg py-3 px-4 outline-none focus:border-cyan-400"></textarea>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-cyan-900/50 border border-cyan-500/50 text-cyan-50 font-bold uppercase tracking-widest text-xs px-8 py-3 rounded-lg">Publish</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="flex flex-col gap-10">
+            {% for post in posts %}
+            <article class="bg-[#0a0a1a]/40 border border-white/10 rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-white/5 bg-black/20 flex justify-between items-start">
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-lg text-white capitalize">{{ post.author_name }}</span>
+                            {% if post.author_role == 'admin' %}
+                                <span class="bg-red-900/50 text-red-300 border border-red-500/30 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full">Admin</span>
+                            {% elif post.author_role == 'researcher' %}
+                                <span class="bg-purple-900/50 text-purple-300 border border-purple-500/30 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full">Researcher</span>
+                            {% endif %}
+                            {% if post.is_top %}
+                                <span class="bg-yellow-900/50 text-yellow-300 border border-yellow-500/30 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full"><i class="fa-solid fa-star"></i> Top Contributor</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-white/40 tracking-widest">{{ post.date }}</span>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <h2 class="text-2xl font-bold mb-4">{{ post.title }}</h2>
+                    <p class="text-gray-300 leading-relaxed">{{ post.content }}</p>
+                </div>
+
+                <div class="bg-black/40 p-6 border-t border-white/5">
+                    <h4 class="text-xs font-bold tracking-widest uppercase text-white/50 mb-6">Comments</h4>
+                    <div class="flex flex-col gap-4 mb-6">
+                        {% for comment in post.post_comments %}
+                        <div class="bg-[#050510] border border-white/5 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="font-bold text-sm text-cyan-300 capitalize">{{ comment.author_name }}</span>
+                                {% if comment.author_role == 'admin' %}<span class="text-red-400 text-[10px]"><i class="fa-solid fa-shield"></i></span>{% endif %}
+                                {% if comment.author_role == 'researcher' %}<span class="text-purple-400 text-[10px]"><i class="fa-solid fa-microscope"></i></span>{% endif %}
+                                {% if comment.is_top %}<span class="text-yellow-400 text-[10px]"><i class="fa-solid fa-star"></i></span>{% endif %}
+                            </div>
+                            <p class="text-gray-400 text-sm">{{ comment.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <form action="/create_comment" method="POST" class="flex gap-4">
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                        <input type="text" name="content" placeholder="Write a comment..." required class="flex-1 bg-[#0a0a1a] border border-white/10 rounded-lg py-2 px-4 text-sm outline-none">
+                        <button type="submit" class="bg-cyan-900/50 border border-cyan-500/50 text-cyan-50 uppercase tracking-widest text-[10px] px-6 py-2 rounded-lg">Reply</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+</body>
+</html>

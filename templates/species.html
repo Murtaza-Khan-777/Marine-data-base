@@ -2,79 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Species Database Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+    <style> select { -webkit-appearance: none; -moz-appearance: none; appearance: none; } </style>
 </head>
-<body class="bg-[#050510] text-white overflow-hidden font-sans h-screen flex flex-col relative">
+<body class="bg-[#050510] text-white font-sans overflow-x-hidden min-h-screen relative">
     
-    <div class="hidden from-indigo-900 via-purple-900 to-[#050510] from-teal-900 via-cyan-900 from-blue-900 via-slate-900 from-pink-400 via-purple-400 to-cyan-400 from-green-400 via-teal-400 from-blue-400 via-gray-300 to-white"></div>
+    {% if active_species %}
+    <div class="fixed inset-0 z-0 h-screen overflow-hidden bg-black pointer-events-none">
+        <img src="{{ active_species.bgimg }}" alt="Background" class="w-full h-full object-cover opacity-50">
+        <div class="absolute inset-0 bg-gradient-to-br {{ active_species.overlaygradient }} opacity-80" ></div>
+    </div>
+    {% endif %}
 
-    <div class="absolute inset-0 z-0 overflow-hidden bg-black">
-        <img id="bg-image" src="{{ flat_data[0].bgimg }}" alt="Habitat Background" class="w-full h-full object-cover opacity-50 transition-opacity duration-700 ease-in-out">
-        <div class="absolute inset-0 bg-gradient-to-br {{ flat_data[0].overlaygradient }} opacity-80 transition-colors duration-1000" id="bg-overlay"></div>
+    <div class="relative z-10 flex flex-col min-h-screen w-full">
+        <nav class="w-full p-8 flex justify-between items-start max-w-7xl mx-auto">
+            <div class="border border-white/30 px-4 py-2 uppercase tracking-widest text-sm font-bold mt-1">
+                {% if active_species %}{{ active_species.habitat }}{% else %}Database{% endif %}
+            </div>
+            
+            <!-- Jinja Controlled Filtering Form -->
+            <form action="/species" method="GET" class="relative flex-1 max-w-2xl mx-8 flex flex-col gap-3">
+                <div class="relative flex items-center bg-[#0a0a1a]/80 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2">
+                    <i class="fa-solid fa-magnifying-glass text-white/50 mr-3"></i>
+                    <input type="text" name="search" value="{{ curr_search }}" placeholder="Filter species by name..." class="bg-transparent border-none outline-none text-white w-full text-sm">
+                </div>
+                <div class="flex gap-4">
+                    <select name="habitat" onchange="this.form.submit()" class="w-1/3 bg-[#0a0a1a]/80 rounded-full px-4 py-2 text-sm outline-none cursor-pointer">
+                        <option value="">All Habitats</option>
+                        {% for hab in habitats %}<option value="{{ hab }}" {% if curr_hab == hab %}selected{% endif %}>{{ hab.title() }}</option>{% endfor %}
+                    </select>
+                    <select name="climate" onchange="this.form.submit()" class="w-1/3 bg-[#0a0a1a]/80 rounded-full px-4 py-2 text-sm outline-none cursor-pointer">
+                        <option value="">All Climates</option>
+                        {% for clim in climates %}<option value="{{ clim }}" {% if curr_clim == clim %}selected{% endif %}>{{ clim.title() }}</option>{% endfor %}
+                    </select>
+                    <select name="type" onchange="this.form.submit()" class="w-1/3 bg-[#0a0a1a]/80 rounded-full px-4 py-2 text-sm outline-none cursor-pointer">
+                        <option value="">All Types</option>
+                        {% for t in types %}<option value="{{ t }}" {% if curr_type == t %}selected{% endif %}>{{ t.title() }}</option>{% endfor %}
+                    </select>
+                </div>
+                <noscript><button type="submit" class="bg-cyan-900 px-4 py-2 rounded">Apply Filters</button></noscript>
+            </form>
+
+            <div class="flex gap-6 items-center mt-3">
+                <a href="/home" class="hover:text-cyan-400 transition-colors" title="Home"><i class="fa-solid fa-house"></i></a>
+                <button type="button" onclick="document.getElementById('sidebar').classList.toggle('translate-x-[150%]'); document.getElementById('sidebar').classList.toggle('opacity-0');" class="hover:text-cyan-400 transition-colors text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="flex-1 flex items-center max-w-7xl mx-auto w-full px-8 pb-16">
+            {% if active_species %}
+            <div class="w-1/2 pr-12">
+                <h1 class="text-7xl md:text-8xl font-bold uppercase tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r {{ active_species.gradient }}">
+                    {{ active_species.name }}
+                </h1>
+                <h3 class="text-2xl mb-4 font-light">About</h3>
+                <p class="text-gray-300 leading-relaxed mb-10 max-w-md font-light">{{ active_species.desc }}</p>
+                <a href="#research-archive" class="inline-block px-8 py-3 rounded-full border border-cyan-500/50 bg-[#0a0a1a] hover:bg-cyan-900/30 uppercase tracking-widest text-sm font-semibold">View Research</a>
+            </div>
+            <div class="w-1/2 relative h-full flex justify-center items-center">
+                <img src="{{ active_species.img }}" alt="Specie" class="w-full max-w-lg aspect-square object-cover rounded-full filter {{ active_species.glowclass }} float-animation mix-blend-screen">
+            </div>
+            {% else %}
+            <div class="w-full text-center text-white/50 italic py-24">No species match your current filters. Try resetting the dropdowns.</div>
+            {% endif %}
+        </main>
     </div>
 
-    <!-- Navigation -->
-    <nav class="relative z-20 w-full p-8 flex justify-between items-center max-w-7xl mx-auto">
-        <div id="habitat-title" class="border border-white/30 px-4 py-2 uppercase tracking-widest text-sm hover:border-cyan-400 hover:text-cyan-400 transition-colors font-bold">
-            {{ flat_data[0].habitat }}
-        </div>
-        
-        <div class="relative flex-1 max-w-sm mx-8">
-            <div class="relative flex items-center bg-[#0a0a1a]/80 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 hover:border-cyan-400 transition-colors">
-                <i class="fa-solid fa-magnifying-glass text-white/50 mr-3"></i>
-                <input type="text" id="search-input" placeholder="Search species..." class="bg-transparent border-none outline-none text-white w-full text-sm placeholder-white/40">
-            </div>
-            <ul id="search-results" class="absolute top-[120%] left-0 w-full bg-[#050510]/95 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden hidden flex-col max-h-48 overflow-y-auto hide-scrollbar shadow-2xl z-50">
-            </ul>
-        </div>
-
-        <div class="flex gap-6 items-center">
-            <i class="fa-regular fa-user cursor-pointer hover:text-cyan-400 transition-colors"></i>
-            <!-- Hamburger menu now triggers togglesidebar() -->
-            <i class="fa-solid fa-bars cursor-pointer hover:text-cyan-400 transition-colors text-xl" onclick="togglesidebar()"></i>
-        </div>
-    </nav>
-
-    <main class="relative z-10 flex-1 flex items-center max-w-7xl mx-auto w-full px-8">
-        <div class="w-1/2 pr-12 opacity-0 transform translate-y-8 transition-all duration-700 ease-out" id="text-content">
-            <h1 id="specie-title" class="text-7xl md:text-8xl font-bold uppercase tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r {{ flat_data[0].gradient }} drop-shadow-[0_0_15px_{{ flat_data[0].shadow }}]">
-                {{ flat_data[0].name }}
-            </h1>
-            <h3 class="text-2xl mb-4 font-light">About</h3>
-            <p id="specie-desc" class="text-gray-300 leading-relaxed mb-10 max-w-md font-light">
-                {{ flat_data[0].desc }}
-            </p>
-            <button class="group relative px-8 py-3 rounded-full border border-cyan-500/50 bg-[#0a0a1a] hover:bg-cyan-900/30 overflow-hidden transition-all duration-300">
-                <span class="relative z-10 uppercase tracking-widest text-sm text-cyan-50 font-semibold group-hover:text-cyan-300 transition-colors">Learn More</span>
-                <div class="absolute inset-0 rounded-full border border-cyan-400 opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity"></div>
-                <div class="absolute inset-0 bg-cyan-400 blur-[20px] opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            </button>
-        </div>
-
-        <div class="w-1/2 relative h-full flex justify-center items-center">
-            <div id="image-container" class="relative w-full max-w-lg aspect-square opacity-0 transition-opacity duration-700">
-                <img id="main-image" src="{{ flat_data[0].img }}" alt="Specie" class="w-full h-full object-cover rounded-full filter {{ flat_data[0].glowclass }} float-animation mix-blend-screen">
+    {% if active_species %}
+    <section id="research-archive" class="relative z-10 w-full bg-[#050510]/95 backdrop-blur-xl border-t border-white/10 py-24 min-h-[50vh]">
+        <div class="max-w-7xl mx-auto px-8">
+            <h2 class="text-3xl font-light mb-12 border-b border-white/10 pb-4 uppercase tracking-widest"><span class="font-bold text-cyan-400">{{ active_species.name }}</span> Research Logs</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for r in active_species.researches %}
+                <a href="/research/{{ r.id }}" class="group block bg-[#0a0a1a] border border-white/10 rounded-xl p-6 hover:border-cyan-400 hover:bg-cyan-900/20">
+                    <div class="text-xs text-cyan-400 mb-3 tracking-widest">{{ r.date }}</div>
+                    <h3 class="text-lg font-bold text-white mb-2">{{ r.topic }}</h3>
+                    <p class="text-sm text-gray-400 line-clamp-2">{{ r.description }}</p>
+                </a>
+                {% else %}
+                <p class="text-white/40 italic">No research logs available for this species.</p>
+                {% endfor %}
             </div>
         </div>
-    </main>
+    </section>
+    {% endif %}
 
-    <!-- Collapsable Grouped Side Menu -->
-    <aside id="sidebar" class="absolute right-8 top-36 bottom-32 w-48 overflow-y-auto z-20 hide-scrollbar flex flex-col gap-6 bg-black/40 p-4 rounded-xl backdrop-blur-md border border-white/10 transition-all duration-500 ease-in-out transform translate-x-12 opacity-0 pointer-events-none">
+    <!-- Sidebar Menu (Powered purely by Jinja & Anchor Tags) -->
+    <aside id="sidebar" class="fixed right-8 top-36 bottom-32 w-48 overflow-y-auto z-50 flex flex-col gap-6 bg-black/80 p-4 rounded-xl border border-white/20 transition-all duration-300 transform translate-x-[150%] opacity-0">
         {% for habitat, species_list in grouped_data.items() %}
             <div>
                 <h4 class="text-cyan-400/80 uppercase text-xs tracking-widest mb-3 border-b border-cyan-400/20 pb-1 font-bold">{{ habitat }}</h4>
                 <ul class="flex flex-col gap-3 border-l border-white/10 ml-1 pl-3">
-                    {% for specie in species_list %}
-                        <li class="text-white/60 hover:text-white cursor-pointer text-sm transition-colors specie-menu-item" data-name="{{ specie.name }}">
-                            {{ specie.name.title() }}
+                    {% for sp in species_list %}
+                        <li>
+                            <a href="/species?specid={{ sp.specid }}&search={{ curr_search }}&habitat={{ curr_hab }}&climate={{ curr_clim }}&type={{ curr_type }}" class="text-white/60 hover:text-white text-sm">
+                                {{ sp.name.title() }}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -82,9 +110,5 @@
         {% endfor %}
     </aside>
 
-    <script>
-        const db_data = {{ flat_data | tojson | safe }};
-    </script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
