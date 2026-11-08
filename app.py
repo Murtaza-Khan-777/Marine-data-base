@@ -4,47 +4,47 @@ from collections import Counter
 
 app = Flask(__name__)
 
-# --- Simulated Database ---
-class backend:
-    users = {
-        "admin@marine.org": {"name": "system admin", "role": "admin", "status": "active", "strikes": 0},
-        "dr.smith@marine.org": {"name": "dr. smith", "role": "researcher", "status": "approved", "strikes": 0},
-        "dr.jones@marine.org": {"name": "dr. jones", "role": "researcher", "status": "approved", "strikes": 0},
-        "john@example.com": {"name": "john doe", "role": "user", "status": "active", "strikes": 0}
-    }
+# # --- Simulated Database ---
+# class backend:
+#     users = {
+#         "admin@marine.org": {"name": "system admin", "role": "admin", "status": "active", "strikes": 0},
+#         "dr.smith@marine.org": {"name": "dr. smith", "role": "researcher", "status": "approved", "strikes": 0},
+#         "dr.jones@marine.org": {"name": "dr. jones", "role": "researcher", "status": "approved", "strikes": 0},
+#         "john@example.com": {"name": "john doe", "role": "user", "status": "active", "strikes": 0}
+#     }
 
-    posts = [
-        {"id": 1, "author_email": "dr.smith@marine.org", "title": "Great White Migration 2026", "content": "Just uploaded tracking data for the Pacific.", "date": "2026-11-07"}
-    ]
+#     posts = [
+#         {"id": 1, "author_email": "dr.smith@marine.org", "title": "Great White Migration 2026", "content": "Just uploaded tracking data for the Pacific.", "date": "2026-11-07"}
+#     ]
 
-    comments = [
-        {"id": 1, "post_id": 1, "author_email": "john@example.com", "content": "Fascinating study! What about temperature?", "date": "2026-11-07"}
-    ]
+#     comments = [
+#         {"id": 1, "post_id": 1, "author_email": "john@example.com", "content": "Fascinating study! What about temperature?", "date": "2026-11-07"}
+#     ]
 
-    species_db = [
-        {"specid": 1, "name": "great white", "type": "fish", "lifespan": 70, "status": "vulnerable", "habitat": "ocean", "climate": "temperate", "img": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?q=80&w=1000", "bgimg": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=2000", "gradient": "from-blue-400 via-gray-300 to-white", "shadow": "rgba(96,165,250,0.4)", "glowclass": "glow-shark", "overlaygradient": "from-blue-900 via-slate-900 to-[#050510]", "desc": "A vulnerable fish found in temperate climates."},
-        {"specid": 2, "name": "sea turtle", "type": "reptile", "lifespan": 50, "status": "endangered", "habitat": "reef", "climate": "tropical", "img": "https://images.unsplash.com/photo-1518467166778-b88f373ff255?q=80&w=1000", "bgimg": "https://images.unsplash.com/photo-1546026423-cc4642628d2b?q=80&w=2000", "gradient": "from-green-400 via-teal-400 to-cyan-400", "shadow": "rgba(52,211,153,0.4)", "glowclass": "glow-turtle", "overlaygradient": "from-teal-900 via-cyan-900 to-[#050510]", "desc": "An endangered reptile found in tropical climates."}
-    ]
+#     species_db = [
+#         {"specid": 1, "name": "great white", "type": "fish", "lifespan": 70, "status": "vulnerable", "habitat": "ocean", "climate": "temperate", "img": "https://images.unsplash.com/photo-1560275619-4662e36fa65c?q=80&w=1000", "bgimg": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=2000", "gradient": "from-blue-400 via-gray-300 to-white", "shadow": "rgba(96,165,250,0.4)", "glowclass": "glow-shark", "overlaygradient": "from-blue-900 via-slate-900 to-[#050510]", "desc": "A vulnerable fish found in temperate climates."},
+#         {"specid": 2, "name": "sea turtle", "type": "reptile", "lifespan": 50, "status": "endangered", "habitat": "reef", "climate": "tropical", "img": "https://images.unsplash.com/photo-1518467166778-b88f373ff255?q=80&w=1000", "bgimg": "https://images.unsplash.com/photo-1546026423-cc4642628d2b?q=80&w=2000", "gradient": "from-green-400 via-teal-400 to-cyan-400", "shadow": "rgba(52,211,153,0.4)", "glowclass": "glow-turtle", "overlaygradient": "from-teal-900 via-cyan-900 to-[#050510]", "desc": "An endangered reptile found in tropical climates."}
+#     ]
 
-    habitats_db = []
-    pending_species = []
+#     habitats_db = []
+#     pending_species = []
 
-    researches_db = [
-        {"id": 1, "topic": "Great White Migration", "description": "Tracking global movements.", "date": "2026-08-15", "researcher": "dr.smith@marine.org", "species": "great white", "climate": "temperate", "pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"}
-    ]
+#     researches_db = [
+#         {"id": 1, "topic": "Great White Migration", "description": "Tracking global movements.", "date": "2026-08-15", "researcher": "dr.smith@marine.org", "species": "great white", "climate": "temperate", "pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"}
+#     ]
 
-current_user_email = "admin@marine.org"
+# current_user_email = "admin@marine.org"
 
-def get_current_user():
-    return backend.users.get(current_user_email, {})
+# def get_current_user():
+#     return backend.users.get(current_user_email, {})
 
-def get_top_blog_contributors():
-    activity = Counter([p["author_email"] for p in backend.posts] + [c["author_email"] for c in backend.comments])
-    return [user[0] for user in activity.most_common(5)]
+# def get_top_blog_contributors():
+#     activity = Counter([p["author_email"] for p in backend.posts] + [c["author_email"] for c in backend.comments])
+#     return [user[0] for user in activity.most_common(5)]
 
-def check_strikes(email):
-    if email in backend.users and backend.users[email]['strikes'] >= 3:
-        backend.users[email]['status'] = 'banned'
+# def check_strikes(email):
+#     if email in backend.users and backend.users[email]['strikes'] >= 3:
+#         backend.users[email]['status'] = 'banned'
 
 # --- Routes ---
 @app.route('/')
