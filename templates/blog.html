@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <title>Community Blog | Marine Database</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -27,10 +28,47 @@
                 <textarea name="content" rows="3" placeholder="Share observations..." required class="bg-black/40 border border-white/10 rounded-lg py-3 px-4 outline-none focus:border-cyan-400"></textarea>
                 <div class="flex justify-end">
                     <button type="submit" class="bg-cyan-900/50 border border-cyan-500/50 text-cyan-50 font-bold uppercase tracking-widest text-xs px-8 py-3 rounded-lg">Publish</button>
+=======
+    <title>Expeditions | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+</head>
+<body class="bg-ocean-950 text-slate-300 min-h-screen antialiased relative">
+    
+    <div class="fixed inset-0 z-0 h-[60vh] pointer-events-none">
+        <img src="https://images.unsplash.com/photo-1582967788606-a171c1080cb0?q=80&w=2000" class="w-full h-full object-cover opacity-20 mask-image:linear-gradient(to_bottom,black,transparent)">
+        <div class="absolute inset-0 bg-gradient-to-b from-ocean-950/60 via-ocean-950/90 to-ocean-950"></div>
+    </div>
+
+    <nav class="relative z-20 px-10 py-8 flex items-center justify-between max-w-5xl mx-auto">
+        <div class="flex items-center gap-3 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            <span class="text-[10px] tracking-widest uppercase font-semibold">Ocean Archive</span>
+        </div>
+        <a href="/home" class="bg-white/10 hover:bg-white/20 border border-white/10 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest text-white transition-colors">Dashboard</a>
+    </nav>
+
+    <main class="relative z-20 max-w-4xl mx-auto px-10 pt-10 pb-24">
+        <header class="mb-16 text-center">
+            <h1 class="text-6xl font-light text-white mb-4 tracking-tight">Field <span class="font-serif italic text-teal-300">Journal</span></h1>
+            <p class="text-sm font-light text-slate-400">Community observations from the global network.</p>
+        </header>
+
+        <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-8 mb-16 shadow-2xl">
+            <form action="/create_post" method="POST" class="flex flex-col gap-4">
+                <input type="text" name="title" placeholder="Entry Title" required class="bg-transparent border-b border-white/10 py-2 text-sm text-white outline-none focus:border-teal-400 placeholder-slate-500 font-serif text-xl">
+                <textarea name="content" rows="2" placeholder="Document observation..." required class="bg-transparent border-b border-white/10 py-2 text-sm text-slate-300 outline-none focus:border-teal-400 placeholder-slate-500 resize-none font-light"></textarea>
+                <div class="flex justify-end mt-2">
+                    <button type="submit" class="bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-400 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest font-medium transition-colors">Publish Note</button>
+>>>>>>> 21bf934 (front end optimised for interim demo)
                 </div>
             </form>
         </div>
 
+<<<<<<< HEAD
         <div class="flex flex-col gap-10">
             {% for post in posts %}
             <article class="bg-[#0a0a1a]/40 border border-white/10 rounded-2xl overflow-hidden">
@@ -75,6 +113,38 @@
                         <input type="hidden" name="post_id" value="{{ post.id }}">
                         <input type="text" name="content" placeholder="Write a comment..." required class="flex-1 bg-[#0a0a1a] border border-white/10 rounded-lg py-2 px-4 text-sm outline-none">
                         <button type="submit" class="bg-cyan-900/50 border border-cyan-500/50 text-cyan-50 uppercase tracking-widest text-[10px] px-6 py-2 rounded-lg">Reply</button>
+=======
+        <div class="flex flex-col gap-12">
+            {% for post in posts %}
+            <article class="bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-3xl p-10">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-4">
+                        <span class="font-medium text-sm text-white capitalize">{{ post.author_name }}</span>
+                        {% if post.author_role != 'user' %}
+                            <span class="text-[9px] uppercase tracking-widest text-teal-400/80 border border-teal-400/30 px-2 py-1 rounded-full">{{ post.author_role }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-[10px] uppercase tracking-widest text-slate-500 font-mono">{{ post.date }}</span>
+                </div>
+                
+                <h2 class="font-serif text-3xl text-slate-200 mb-4">{{ post.title }}</h2>
+                <p class="text-sm font-light text-slate-400 leading-relaxed mb-8">{{ post.content }}</p>
+
+                <div class="bg-ocean-950/50 rounded-2xl p-6 border border-white/5">
+                    <h4 class="text-[10px] font-medium text-slate-500 mb-4 uppercase tracking-widest">Discussion Thread</h4>
+                    <div class="flex flex-col gap-4 mb-6">
+                        {% for comment in post.post_comments %}
+                        <div class="text-sm font-light">
+                            <span class="font-medium text-slate-300 capitalize mr-2">{{ comment.author_name }}</span>
+                            <span class="text-slate-400">{{ comment.content }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <form action="/create_comment" method="POST" class="flex gap-4 items-center">
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                        <input type="text" name="content" placeholder="Add reply..." required class="flex-1 bg-transparent border-b border-white/10 py-2 text-sm text-slate-300 outline-none focus:border-teal-400 placeholder-slate-600 font-light">
+                        <button type="submit" class="text-[10px] text-teal-400 hover:text-white uppercase tracking-widest transition-colors font-medium">Reply</button>
+>>>>>>> 21bf934 (front end optimised for interim demo)
                     </form>
                 </div>
             </article>

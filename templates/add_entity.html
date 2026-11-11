@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <title>{{ 'Add Entity' if user.role == 'admin' else 'Propose Entity' }} | MarineNet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style> select { -webkit-appearance: none; -moz-appearance: none; appearance: none; } </style>
@@ -59,5 +60,135 @@
             </div>
         </form>
     </div>
+=======
+    <title>Directory | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+    <style> select { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; } </style>
+</head>
+<body class="bg-ocean-950 text-slate-300 min-h-screen antialiased flex flex-col items-center justify-center p-6 relative overflow-x-hidden">
+    
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2000" class="w-full h-full object-cover opacity-30">
+        <div class="absolute inset-0 bg-gradient-to-t from-ocean-950 via-ocean-950/80 to-ocean-950/50"></div>
+    </div>
+
+    <nav class="absolute top-0 left-0 w-full p-8 flex items-center justify-between z-20">
+        <div class="flex items-center gap-3 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            <span class="text-[10px] tracking-widest uppercase font-semibold">Ocean Archive</span>
+        </div>
+        <a href="/home" class="bg-white/10 hover:bg-white/20 border border-white/10 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest text-white transition-colors">Discard</a>
+    </nav>
+
+    <div class="w-full max-w-xl relative z-10 my-16">
+        <div class="mb-10 text-center">
+            <h4 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-4 font-semibold">Database Management</h4>
+            <h1 class="font-serif text-4xl text-white mb-2 tracking-wide">Add New Species Entry</h1>
+            <p class="text-sm font-light text-slate-400">Populate taxonomic records with multi-zone mapping.</p>
+        </div>
+
+        <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl">
+            <form action="/add_entity" method="POST" class="flex flex-col gap-5">
+                <input type="hidden" name="entity_type" value="species">
+                
+                <input type="text" name="name" placeholder="Species Common / Scientific Name" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+                
+                <div class="grid grid-cols-2 gap-5">
+                    <input type="text" name="type" placeholder="Classification (e.g. Fish)" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+                    <input type="number" name="lifespan" placeholder="Lifespan (Yrs)" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+                </div>
+
+                <input type="text" name="status" placeholder="Conservation Status (e.g. Endangered)" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+
+                <!-- Multi-value Regions Selection (Dropdowns) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[10px] uppercase tracking-widest text-teal-400 font-semibold">Associated Regions</label>
+                    <div id="regions-container" class="flex flex-col gap-2">
+                        <div class="flex gap-2">
+                            <select name="regions" required class="flex-1 bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                                <option value="" disabled selected class="bg-ocean-950 text-slate-500">Select Region</option>
+                                {% for reg in available_regions %}
+                                <option value="{{ reg.name }}" class="bg-ocean-950 text-slate-300">{{ reg.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addRegionField()" class="text-xs text-teal-300 hover:text-white transition-colors text-left mt-1">+ Add Another Region</button>
+                </div>
+
+                <!-- Multi-value Habitats Selection (Dropdowns) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-[10px] uppercase tracking-widest text-teal-400 font-semibold">Habitats / Zones</label>
+                    <div id="habitats-container" class="flex flex-col gap-2">
+                        <div class="flex gap-2">
+                            <select name="habitats" required class="flex-1 bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                                <option value="" disabled selected class="bg-ocean-950 text-slate-500">Select Habitat</option>
+                                {% for hab in available_habitats %}
+                                <option value="{{ hab.name }}" class="bg-ocean-950 text-slate-300">{{ hab.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addHabitatField()" class="text-xs text-teal-300 hover:text-white transition-colors text-left mt-1">+ Add Another Habitat</button>
+                </div>
+
+                <!-- Image URL Input Section -->
+                <input type="url" name="img" placeholder="Image URL (https://example.com/image.jpg)" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+
+                <textarea name="desc" rows="3" placeholder="Taxonomic Description Summary..." class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500 resize-none"></textarea>
+
+                <button type="submit" class="mt-4 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 font-medium py-4 rounded-full text-xs tracking-widest uppercase transition-colors">
+                    {{ 'Commit to Database' if user.role == 'admin' else 'Submit Proposal' }} &rarr;
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const regionOptionsHtml = `
+            <option value="" disabled selected class="bg-ocean-950 text-slate-500">Select Region</option>
+            {% for reg in available_regions %}
+            <option value="{{ reg.name }}" class="bg-ocean-950 text-slate-300">{{ reg.name }}</option>
+            {% endfor %}
+        `;
+
+        const habitatOptionsHtml = `
+            <option value="" disabled selected class="bg-ocean-950 text-slate-500">Select Habitat</option>
+            {% for hab in available_habitats %}
+            <option value="{{ hab.name }}" class="bg-ocean-950 text-slate-300">{{ hab.name }}</option>
+            {% endfor %}
+        `;
+
+        function addRegionField() {
+            const container = document.getElementById('regions-container');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-2 items-center';
+            wrapper.innerHTML = `
+                <select name="regions" required class="flex-1 bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                    ${regionOptionsHtml}
+                </select>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 text-xs px-3 py-2 hover:bg-white/5 rounded-lg">&times;</button>
+            `;
+            container.appendChild(wrapper);
+        }
+
+        function addHabitatField() {
+            const container = document.getElementById('habitats-container');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex gap-2 items-center';
+            wrapper.innerHTML = `
+                <select name="habitats" required class="flex-1 bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                    ${habitatOptionsHtml}
+                </select>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 text-xs px-3 py-2 hover:bg-white/5 rounded-lg">&times;</button>
+            `;
+            container.appendChild(wrapper);
+        }
+    </script>
+>>>>>>> 21bf934 (front end optimised for interim demo)
 </body>
 </html>

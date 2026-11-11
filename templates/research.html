@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <title>{{ research.topic }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -35,6 +36,53 @@
 
         <div class="w-full md:w-2/3 h-full bg-[#1a1a2e] relative">
             <iframe src="{{ research.pdf_url }}" class="w-full h-full border-none shadow-inner"></iframe>
+=======
+    <title>Document Viewer | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 900: '#071018', 800: '#0b1622', 700: '#111d2c' } } } } }
+    </script>
+</head>
+<body class="bg-ocean-900 text-slate-300 h-screen flex flex-col antialiased">
+    
+    <nav class="h-14 flex items-center justify-between px-8 flex-shrink-0 border-b border-white/5">
+        <a href="/species" class="text-xs uppercase tracking-widest text-slate-400 hover:text-white transition-colors">&larr; Return to Database</a>
+        <div class="text-[10px] uppercase tracking-widest text-teal-400/50">Log ID: {{ research.id }}</div>
+    </nav>
+
+    <div class="flex-1 flex overflow-hidden">
+        <div class="w-96 border-r border-white/5 bg-ocean-800/30 p-8 overflow-y-auto flex-shrink-0 flex flex-col justify-between">
+            <div>
+                <div class="text-[10px] font-medium text-teal-400 uppercase tracking-widest mb-4 inline-block border border-dashed border-teal-500/30 px-3 py-1 rounded-full">{{ research.species }}</div>
+                
+                <h1 class="font-serif text-3xl text-white leading-tight mb-4">{{ research.topic }}</h1>
+                <p class="text-[10px] uppercase tracking-widest text-slate-500 mb-8">{{ research.date }}</p>
+
+                <div class="border-t border-b border-white/5 py-4 mb-8 flex justify-between items-center">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500">Investigator</p>
+                    <a href="/researcher/{{ research.researcher }}" class="text-sm font-medium text-slate-300 hover:text-teal-400 transition-colors">{{ research.researcher }}</a>
+                </div>
+
+                <h3 class="font-serif text-lg text-white mb-2 italic">Abstract</h3>
+                <p class="text-sm font-light text-slate-400 leading-relaxed">{{ research.description }}</p>
+            </div>
+            
+            <div class="mt-8 flex flex-col gap-3">
+                <a href="{{ research.pdf_url }}" download class="block w-full text-center bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-400 font-medium text-[10px] uppercase tracking-widest py-3 rounded-sm transition-colors">
+                    Download Archive
+                </a>
+                {% if user.role == 'admin' %}
+                <a href="/admin/flag_research/{{ research.id }}" class="block w-full text-center border border-red-500/20 text-red-400 hover:bg-red-500/10 text-[10px] uppercase tracking-widest py-3 rounded-sm transition-colors">
+                    Flag Document
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex-1 bg-[#050a0f]">
+            <iframe src="{{ research.pdf_url }}" class="w-full h-full border-none opacity-80 mix-blend-luminosity"></iframe>
+>>>>>>> 21bf934 (front end optimised for interim demo)
         </div>
     </div>
 </body>
