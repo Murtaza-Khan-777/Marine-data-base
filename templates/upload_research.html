@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publish Log | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+    <style> select { -webkit-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-ocean-950 text-slate-300 min-h-screen antialiased flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2000" class="w-full h-full object-cover opacity-30">
+        <div class="absolute inset-0 bg-gradient-to-t from-ocean-950 via-ocean-950/80 to-ocean-950/50"></div>
+    </div>
+
+    <nav class="absolute top-0 left-0 w-full p-8 flex items-center justify-between z-20">
+        <div class="flex items-center gap-3 text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            <span class="text-[10px] tracking-widest uppercase font-semibold">Ocean Archive</span>
+        </div>
+        <a href="/home" class="bg-white/10 hover:bg-white/20 border border-white/10 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest text-white transition-colors">Discard</a>
+    </nav>
+
+    <div class="w-full max-w-xl relative z-10 mt-12">
+        <div class="mb-10 text-center">
+            <h4 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-4 font-semibold">Expedition Logging</h4>
+            <h1 class="font-serif text-4xl text-white mb-2 tracking-wide">Publish Observation</h1>
+            <p class="text-sm font-light text-slate-400">Append logs directly to established taxa.</p>
+        </div>
+
+        <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl">
+            <form action="/upload_research" method="POST" class="flex flex-col gap-5">
+                <input type="text" name="topic" placeholder="Document Title" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500">
+                
+                <textarea name="description" rows="4" placeholder="Abstract Summary" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 font-light placeholder-slate-500 resize-none"></textarea>
+                
+                <div class="grid grid-cols-2 gap-5">
+                    <select name="species" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                        <option value="" disabled selected class="bg-ocean-900 text-slate-600">Target Taxa</option>
+                        {% for s in species_list %}
+                        <option value="{{ s.name }}" class="bg-ocean-900">{{ s.name.title() }}</option>
+                        {% endfor %}
+                    </select>
+                    <select name="Region" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                        <option value="" disabled selected class="bg-ocean-900 text-slate-600">Region</option>
+                        {% for r in regions %}
+                        <option value="{{ c }}" class="bg-ocean-900">{{ c.title() }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="mt-4 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 font-medium py-4 rounded-full text-xs tracking-widest uppercase transition-colors">Publish to Network &rarr;</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

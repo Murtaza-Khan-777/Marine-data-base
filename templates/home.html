@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+    <style> select { -webkit-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-ocean-950 text-slate-300 min-h-screen antialiased relative overflow-x-hidden">
+    
+    <!-- Cinematic Background -->
+    <div class="absolute inset-0 z-0 h-[80vh]">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDPaPuyeDQD-6sHL4UsPnndsqpcmYEigV5wLgJ3_uJOy0JkyUFDgHFQdI&s=10" class="w-full h-full object-cover opacity-50 mask-image:linear-gradient(to_bottom,black,transparent)">
+        <div class="absolute inset-0 bg-gradient-to-r from-ocean-950 via-ocean-950/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-ocean-950 to-transparent"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-20 flex items-center justify-between px-10 py-8 max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-12">
+            <div class="flex items-center gap-3 text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                <span class="text-[10px] tracking-widest uppercase font-semibold">Ocean Archive</span>
+            </div>
+            <div class="hidden md:flex gap-8 text-[11px] font-medium tracking-wide text-slate-300">
+                <a href="/species" class="hover:text-white transition-colors">Taxonomy</a>
+                <a href="/blog" class="hover:text-white transition-colors">Field Notes</a>
+                {% if user.role == 'researcher' %}
+                    <a href="/add_entity" class="hover:text-teal-400 transition-colors">Propose Entity</a>
+                    <a href="/upload_research" class="hover:text-teal-400 transition-colors">Publish</a>
+                {% elif user.role == 'admin' %}
+                    <a href="/add_entity" class="hover:text-teal-400 transition-colors">Add Entity</a>
+                    <a href="/admin" class="hover:text-teal-400 transition-colors">Admin</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="/search" class="text-white hover:text-teal-400 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></a>
+            <a href="/?tab=login" class="bg-white/10 hover:bg-white/20 border border-white/10 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest text-white transition-colors">Sign Out</a>
+        </div>
+    </nav>
+
+    <main class="relative z-20 max-w-screen-2xl mx-auto px-10 pt-16 pb-24">
+        
+        <!-- Hero Section mimicking Reference Image -->
+        <div class="flex flex-col md:flex-row justify-between items-start mb-32">
+            <div class="max-w-xl">
+                <h4 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-4 font-semibold">Global Database</h4>
+                <h1 class="text-7xl md:text-[5.5rem] font-light text-white leading-[1.1] mb-2 tracking-tight">Depths <br><span class="font-serif italic text-teal-300 tracking-normal">Unseen</span></h1>
+                <p class="text-sm font-light text-slate-400 mt-6 leading-relaxed">A cinematic journey into the world's last wild places — and the data that depends on their survival.</p>
+                
+                <!-- Quick Search -->
+                <form action="/search" method="GET" class="mt-10 flex items-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-full p-2 w-fit">
+                    <select name="category" class="bg-transparent text-[10px] uppercase tracking-widest text-teal-400 font-semibold outline-none cursor-pointer pl-4">
+                        <option value="species" class="bg-ocean-900">Species</option>
+                        <option value="regions" class="bg-ocean-900">Regions</option>
+                    </select>
+                    <div class="h-4 w-px bg-white/20"></div>
+                    <input type="text" name="query" placeholder="Search the archive..." class="bg-transparent border-none outline-none px-2 text-sm text-white placeholder-slate-500 font-light w-48">
+                    <button type="submit" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="hidden md:flex flex-col gap-12 pt-8 pr-12">
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-widest text-teal-400/70 font-semibold mb-2">Personnel</h4>
+                    <p class="text-4xl font-light text-white mb-2">{{ top_researchers | length }}<span class="text-xl text-teal-400/50">+</span></p>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest">Active Ecologists</p>
+                    <div class="w-8 h-px bg-teal-400/30 mt-3"></div>
+                </div>
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-widest text-teal-400/70 font-semibold mb-2">Species Documented</h4>
+                    <p class="text-4xl font-light text-white mb-2">{{ top_species | length }}<span class="text-xl text-teal-400/50">+</span></p>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest">Across Database</p>
+                    <div class="w-8 h-px bg-teal-400/30 mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Glass Tiles: Recent Stories & Next Expedition (Reference Bottom Section) -->
+        <div>
+            <h4 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-6 font-semibold">Recent Field Notes</h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% for post in recent_posts[:3] %}
+                <!-- Tile 1 -->
+                <a href="/blog" class="group bg-white/[0.02] backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden hover:bg-white/[0.04] transition-all flex flex-col h-64 relative">
+                    <!-- Subtle gradient overlay on cards to match reference -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-ocean-950 via-ocean-950/20 to-transparent z-10"></div>
+                    <!-- Simulating a background image for posts (using unsplash for demo) -->
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-700">
+                    
+                    <div class="relative z-20 mt-auto p-6">
+                        <h3 class="font-serif text-xl text-white mb-1">{{ post.title }}</h3>
+                        <p class="text-xs text-slate-400 font-light flex items-center justify-between">
+                            <span class="capitalize">{{ post.author_name }}</span>
+                            <span>{{ post.date }}</span>
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+
+                <!-- Large "Next Expedition" Style Tile -->
+                <div class="lg:col-span-2 bg-gradient-to-br from-teal-900/20 to-ocean-900/50 backdrop-blur-xl border border-teal-500/20 rounded-3xl p-8 relative flex flex-col justify-between overflow-hidden">
+                    <svg class="absolute right-0 top-0 opacity-10 w-full h-full object-cover pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,50 Q25,25 50,50 T100,50" fill="none" stroke="white" stroke-width="0.5"/><path d="M0,60 Q25,35 50,60 T100,60" fill="none" stroke="white" stroke-width="0.5"/></svg>
+                    
+                    <div class="relative z-10 flex justify-between items-start">
+                        <h4 class="text-[10px] uppercase tracking-widest text-teal-400 font-semibold mb-6">Database Insights</h4>
+                        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    
+                    <div class="relative z-10 flex items-end justify-between">
+                        <div>
+                            <h3 class="font-serif text-3xl text-white mb-2">Deep <span class="italic">Exploration</span></h3>
+                            <p class="text-sm font-light text-slate-400">View comprehensive telemetry for {{ top_species[0].name if top_species else 'taxa' }}.</p>
+                        </div>
+                        <a href="/species" class="border border-white/20 hover:bg-white/10 px-6 py-3 rounded-full text-[10px] uppercase tracking-widest text-white transition-colors flex items-center gap-2">Explore <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16M13 5l7 7-7 7"></path></svg></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+            <div class="flex gap-4">
+                <span>&copy; 2026 Ocean Archive</span>
+            </div>
+            <span>0.0000&deg; N, 0.0000&deg; E</span>
+        </footer>
+    </main>
+</body>
+</html>

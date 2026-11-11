@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 900: '#071018', 800: '#0b1622', 700: '#111d2c' } } } } }
+    </script>
+</head>
+<body class="bg-ocean-900 text-slate-300 min-h-screen antialiased">
+    
+    <nav class="border-b border-white/5 bg-ocean-900">
+        <div class="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between">
+            <span class="font-serif text-xl tracking-widest text-white">System Administration</span>
+            <a href="/home" class="text-[10px] uppercase tracking-widest text-slate-500 hover:text-teal-400 transition-colors">Exit</a>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-8 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            
+            <div class="flex flex-col gap-12">
+                <!-- Researcher Queue -->
+                <div>
+                    <h2 class="text-xs font-medium text-teal-400 mb-4 uppercase tracking-widest border-b border-dashed border-white/10 pb-2">Access Requests</h2>
+                    <ul class="flex flex-col gap-3">
+                        {% for email in pending_researchers %}
+                        <li class="flex justify-between items-center border-b border-white/5 pb-2">
+                            <span class="text-sm font-light text-slate-300">{{ email }}</span>
+                            <a href="/admin/approve_researcher/{{ email }}" class="text-[10px] text-teal-400 uppercase tracking-widest hover:text-white transition-colors">Grant</a>
+                        </li>
+                        {% else %}<li class="text-sm font-light text-slate-500">Queue empty.</li>{% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Entity Queue -->
+                <div>
+                    <h2 class="text-xs font-medium text-teal-400 mb-4 uppercase tracking-widest border-b border-dashed border-white/10 pb-2">Database Proposals</h2>
+                    <ul class="flex flex-col gap-3">
+                        {% for s in pending_species %}
+                        <li class="flex justify-between items-center border-b border-white/5 pb-2">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-white capitalize">{{ s.name }}</span>
+                                <span class="text-[10px] text-slate-500 uppercase tracking-widest">Type: {{ s.type }}</span>
+                            </div>
+                            <a href="/admin/approve_species/{{ s.specid }}" class="text-[10px] text-teal-400 uppercase tracking-widest hover:text-white transition-colors">Merge</a>
+                        </li>
+                        {% else %}<li class="text-sm font-light text-slate-500">Queue empty.</li>{% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Moderation -->
+            <div>
+                <h2 class="text-xs font-medium text-red-400 mb-4 uppercase tracking-widest border-b border-dashed border-white/10 pb-2">User Moderation</h2>
+                <ul class="flex flex-col gap-6">
+                    {% for email, u in users.items() %}
+                    <li class="flex flex-col gap-2 border-b border-white/5 pb-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-white">{{ email }}</span>
+                            <span class="text-[10px] text-slate-500 uppercase tracking-widest">{{ u.role }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-xs text-slate-400">
+                                State: <span class="capitalize text-slate-200">{{ u.status }}</span> <span class="mx-2 text-slate-600">|</span> 
+                                Violations: <span class="{% if u.strikes > 0 %}text-red-400{% else %}text-slate-200{% endif %}">{{ u.strikes }}/3</span>
+                            </div>
+                            <div class="flex gap-4">
+                                <a href="/admin/strike/{{ email }}" class="text-[10px] text-yellow-500 uppercase tracking-widest hover:text-yellow-400 transition-colors">Strike</a>
+                                <a href="/admin/ban/{{ email }}" class="text-[10px] text-red-500 uppercase tracking-widest hover:text-red-400 transition-colors">Ban</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

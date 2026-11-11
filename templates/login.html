@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+    <style> select { -webkit-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-ocean-950 text-slate-300 h-screen flex flex-col antialiased relative overflow-hidden">
+    
+    <!-- Cinematic Background -->
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1682687982501-1e58f8147228?q=80&w=2000" class="w-full h-full object-cover opacity-40">
+        <div class="absolute inset-0 bg-gradient-to-r from-ocean-950 via-ocean-950/80 to-ocean-950/20"></div>
+    </div>
+
+    <!-- Navigation Line -->
+    <nav class="relative z-10 px-10 py-8 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            <span class="text-xs tracking-widest uppercase font-medium text-white">Ocean Archive</span>
+        </div>
+    </nav>
+
+    <div class="relative z-10 flex-1 flex flex-col md:flex-row items-center justify-between px-10 max-w-7xl mx-auto w-full">
+        <!-- Hero Text -->
+        <div class="hidden md:block w-1/2">
+            <h4 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-4 font-semibold">Authentication Portal</h4>
+            <h1 class="text-6xl md:text-7xl font-light text-white leading-tight mb-2 tracking-tight">Database <br><span class="font-serif italic text-teal-300">Access</span></h1>
+            <p class="text-sm font-light text-slate-400 mt-6 max-w-sm leading-relaxed">Secure entry to global telemetry, field expeditions, and taxonomic records.</p>
+        </div>
+
+        <!-- Glass Tile Form -->
+        <div class="w-full md:w-[450px]">
+            <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl">
+                <div class="flex gap-8 mb-10 border-b border-white/10">
+                    <a href="/?tab=login" class="pb-4 text-[10px] uppercase tracking-widest font-medium transition-colors {% if tab == 'login' %}text-white border-b-2 border-teal-400{% else %}text-slate-500 hover:text-slate-300 border-b-2 border-transparent{% endif %}">Sign In</a>
+                    <a href="/?tab=register" class="pb-4 text-[10px] uppercase tracking-widest font-medium transition-colors {% if tab == 'register' %}text-white border-b-2 border-teal-400{% else %}text-slate-500 hover:text-slate-300 border-b-2 border-transparent{% endif %}">Register</a>
+                </div>
+
+                {% if tab == 'login' %}
+                <form action="/login" method="POST" class="flex flex-col gap-6">
+                    <div>
+                        <input type="email" name="username" placeholder="Email Address" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 transition-colors placeholder-slate-500 font-light">
+                    </div>
+                    <div>
+                        <input type="password" name="password" placeholder="Password" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 transition-colors placeholder-slate-500 font-light">
+                    </div>
+                    <div>
+                        <select name="role" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                            <option value="user" class="bg-ocean-950 text-slate-300">Standard User</option>
+                            <option value="researcher" class="bg-ocean-950 text-slate-300">Researcher</option>
+                            <option value="admin" class="bg-ocean-950 text-slate-300">Administrator</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="mt-4 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-300 font-medium py-4 rounded-full text-xs tracking-widest uppercase transition-colors">Enter Network &rarr;</button>
+                </form>
+                {% else %}
+                <form action="/register" method="POST" class="flex flex-col gap-6">
+                    <div>
+                        <input type="email" name="reg_username" placeholder="Institutional Email" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 transition-colors placeholder-slate-500 font-light">
+                    </div>
+                    <div>
+                        <input type="password" name="reg_password" placeholder="Password" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 transition-colors placeholder-slate-500 font-light">
+                    </div>
+                    <div>
+                        <select name="reg_role" required class="w-full bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-sm text-white outline-none focus:border-teal-400/50 cursor-pointer font-light">
+                            <option value="user" class="bg-ocean-950 text-slate-300">Standard User</option>
+                            <option value="researcher" class="bg-ocean-950 text-slate-300">Researcher (Review Required)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="mt-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium py-4 rounded-full text-xs tracking-widest uppercase transition-colors">Submit Application</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

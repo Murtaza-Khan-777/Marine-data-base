@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Taxonomy | MarineNet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }, colors: { ocean: { 950: '#020b12', 900: '#04121a', 800: '#0a1d29' } } } } }
+    </script>
+    <style> select { -webkit-appearance: none; appearance: none; } </style>
+</head>
+<body class="bg-ocean-950 text-slate-300 antialiased flex flex-col h-screen overflow-hidden">
+    
+    <nav class="flex-shrink-0 flex items-center justify-between px-10 py-6 relative z-30 bg-ocean-950/80 backdrop-blur-xl border-b border-white/5">
+        <div class="flex items-center gap-4 text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            <a href="/home" class="text-[10px] uppercase tracking-widest font-semibold">Ocean Archive / Taxonomy</a>
+        </div>
+        <a href="/home" class="text-[10px] uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Return Dashboard</a>
+    </nav>
+
+    <div class="flex-1 flex overflow-hidden relative">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-80 border-r border-white/5 bg-ocean-900/50 backdrop-blur-xl flex flex-col h-full flex-shrink-0 relative z-30">
+            <div class="p-6 border-b border-white/5">
+                <form action="/species" method="GET" class="flex flex-col gap-4">
+                    <input type="text" name="search" value="{{ curr_search }}" placeholder="Search catalog..." class="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-teal-400/50 placeholder-slate-500 font-light">
+                    <div class="flex gap-2">
+                        <select name="region" onchange="this.form.submit()" class="flex-1 bg-white/[0.03] border border-white/10 rounded-xl px-3 py-2 text-xs outline-none cursor-pointer text-slate-400">
+                            <option value="" class="bg-ocean-900">Filter Region / Habitat</option>
+                            {% for reg in regions %}<option value="{{ reg }}" class="bg-ocean-900" {% if curr_reg == reg %}selected{% endif %}>{{ reg.title() }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <noscript><button type="submit" class="hidden">Filter</button></noscript>
+                </form>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 custom-scroll">
+                {% for region_name, species_list in grouped_data.items() %}
+                <div class="mb-8">
+                    <h4 class="text-[10px] font-semibold text-teal-400/80 mb-3 uppercase tracking-widest">{{ region_name }}</h4>
+                    <ul class="flex flex-col gap-1">
+                        {% for sp in species_list %}
+                        <li>
+                            <a href="/species?specid={{ sp.specid }}&search={{ curr_search }}&region={{ curr_reg }}" 
+                               class="block px-3 py-2 rounded-lg text-sm font-light transition-colors {% if active_species and active_species.specid == sp.specid %}bg-white/[0.05] text-white font-medium border border-white/10{% else %}text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]{% endif %}">
+                                {{ sp.name.title() }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto bg-ocean-950 relative custom-scroll">
+            {% if active_species %}
+            
+            <!-- Immersive Background -->
+            {% if active_species.bgimg %}
+            <div class="absolute inset-0 z-0 pointer-events-none">
+                <img src="{{ active_species.bgimg }}" class="w-full h-full object-cover opacity-20 mix-blend-luminosity">
+                <div class="absolute inset-0 bg-gradient-to-r from-ocean-950 via-ocean-950/80 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-ocean-950 via-ocean-950/20 to-transparent"></div>
+            </div>
+            {% endif %}
+
+            <div class="relative z-10 p-10 md:p-16 max-w-5xl">
+                
+                <!-- Main Header Layout with Right-Side Rounded Square Image Tile -->
+                <div class="flex flex-col lg:flex-row justify-between items-start gap-12 mb-16">
+                    <div class="flex-1">
+                        <div class="flex gap-4 text-[10px] text-teal-400 uppercase tracking-widest mb-4 font-semibold">
+                            <span>{{ active_species.type }}</span> &bull; <span>{{ active_species.status }}</span>
+                        </div>
+                        <h1 class="font-serif text-6xl md:text-7xl text-white capitalize mb-6 leading-tight tracking-tight">{{ active_species.name }}</h1>
+                        <p class="text-sm font-light text-slate-300 leading-relaxed max-w-xl">{{ active_species.desc }}</p>
+                    </div>
+
+                    {% if active_species.img %}
+                    <div class="w-full lg:w-80 h-72 bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-3 flex-shrink-0 shadow-2xl overflow-hidden">
+                        <img src="{{ active_species.img }}" class="w-full h-full object-cover rounded-2xl opacity-90 hover:scale-105 transition-transform duration-700">
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Two Distinct Tiles: Associated Regions & Habitats -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+                    
+                    <!-- Associated Regions Tile -->
+                    <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-3">Associated Regions</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {% for reg in active_species.regions_list %}
+                                <a href="/region/{{ reg.id }}" class="bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-full text-xs text-teal-300 capitalize transition-colors">
+                                    {{ reg.name }}
+                                </a>
+                                {% else %}
+                                <span class="font-serif text-2xl text-white capitalize">Unassigned</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Habitats Tile -->
+                    <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-3">Habitats / Zones</h3>
+                            <div class="flex flex-wrap gap-2">
+                                {% for hab in active_species.habitats_list %}
+                                <a href="/habitat/{{ hab.id }}" class="bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/20 px-3 py-1.5 rounded-full text-xs text-teal-200 capitalize transition-colors">
+                                    {{ hab.name }}
+                                </a>
+                                {% else %}
+                                <span class="font-serif text-2xl text-white capitalize">Pelagic / Open Ecosystem</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-3xl p-10">
+                    <h2 class="text-[10px] uppercase tracking-widest text-teal-400/80 mb-6 font-semibold">Documented Expeditions</h2>
+                    <div class="flex flex-col gap-2">
+                        {% for r in active_species.researches %}
+                        <a href="/research/{{ r.id }}" class="group flex flex-col md:flex-row justify-between md:items-center p-4 rounded-xl hover:bg-white/[0.03] transition-colors border border-transparent hover:border-white/5">
+                            <div>
+                                <h3 class="font-serif text-xl text-slate-200 group-hover:text-white transition-colors mb-1">{{ r.topic }}</h3>
+                                <p class="text-sm font-light text-slate-500 line-clamp-1 max-w-xl">{{ r.description }}</p>
+                            </div>
+                            <span class="text-[10px] uppercase tracking-widest text-slate-600 mt-3 md:mt-0 font-mono">{{ r.date }}</span>
+                        </a>
+                        {% else %}
+                        <p class="text-sm font-light text-slate-500 p-4">No published telemetry available for this taxa.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="h-full flex items-center justify-center relative z-10">
+                <p class="text-sm font-light text-slate-500">Select an entity from the directory.</p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #111d2c; }
+    </style>
+</body>
+</html>
